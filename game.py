@@ -22,7 +22,7 @@ from microgame import Microgame
 def make_game():
     # TODO: Return a new instance of your Microgame class.
     #raise NotImplementedError("make_game")
-    return LumberJack()
+    return Lumberjack()
 
 def title():
     # TODO: Return the title of the game.
@@ -101,7 +101,7 @@ class Man(Sprite):
 ##### MICROGAME CLASS ##########################################################
 
 # TODO: rename this class to your game's name...
-class LumberJack(Microgame):
+class Lumberjack(Microgame):
     def __init__(self):
         # TODO: Initialization code here
         Microgame.__init__(self)
