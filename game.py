@@ -27,17 +27,17 @@ def make_game():
 def title():
     # TODO: Return the title of the game.
     #raise NotImplementedError("title")
-    return "Lumber Jack"
+    return "Lumberjack"
 
 def thumbnail():
     # TODO: Return a (relative path) to the thumbnail image file for your game.
     #raise NotImplementedError("thumbnail")
-    return join('games','Lumber_Jack','thumbnail.png')
+    return join('games','Lumberjack',"images",'thumbnail.png')
 
 def hint():
     # TODO: Return the hint string for your game.
     #raise NotImplementedError("hint")
-    return "Chop the tree as fast as you can"
+    return "Chop down the tree!"
 
 ################################################################################
 
@@ -65,37 +65,37 @@ class Man(Sprite):
     def __init__(self):
         Sprite.__init__(self)
         postion = 0 #0 = left, 1 = right
-        imgpath = join('games', 'Lumber_Jack', 'jack.gif')
-        self.image, self.rect = _load_image(imgpath, 300, 300)#locals.HEIGHT)
+        imgpath = join('games', 'Lumberjack',"images", "timberman_normalleft.png")
+        self.image, self.rect = _load_image(imgpath, 150, 400)#locals.HEIGHT)
         #self.sound = pygame.mixer.Sound(join( ... ))
 
-class treeBlock(Sprite):
-    def __init__(self, x, y, type):
-        Sprite.__init__(self)
-        if  self.type == 0:
-            imgpath = join('games', 'Lumber_Jack', 'tree_right.png')
+# class treeBlock(Sprite):
+#     def __init__(self, x, y, type):
+#         Sprite.__init__(self)
+#         if  self.type == 0:
+#             imgpath = join('games', 'Lumberjack', 'tree_right.png')
 
-        elif self.type == 1:
-            imgpath = join('games', 'Lumber_Jack', 'tree_left.png')
-            x -= 75
-        else:
-            imgpath = join('games', 'Lumber_Jack', 'tree_center.png')
+#         elif self.type == 1:
+#             imgpath = join('games', 'Lumberjack', 'tree_left.png')
+#             x -= 75
+#         else:
+#             imgpath = join('games', 'Lumberjack', 'tree_center.png')
 
-        self.image, self.rect = _load_image(imgpath, x, y)
+#         self.image, self.rect = _load_image(imgpath, x, y)
 
-    #def update(self, event):
-        #self.sound.play()
+#     #def update(self, event):
+#         #self.sound.play()
         
-class tree(Sprite):
-    def __init(self):
-        Sprite.__init__(self)
-        createTree(100, locals.HEIGHT)
+# class tree(Sprite):
+#     def __init(self):
+#         Sprite.__init__(self)
+#         createTree(100, locals.HEIGHT)
 
-    def createTree(x,y):
-        self.Tree = []
-        x, y = tree.rect.topleft
-        while y > 0:
-            self.agrigate.add(treeBlock(x-75, y), randint(0,4))
+#     def createTree(x,y):
+#         self.Tree = []
+#         x, y = tree.rect.topleft
+#         while y > 0:
+#             self.agrigate.add(treeBlock(x-75, y), randint(0,4))
 
 
 ##### MICROGAME CLASS ##########################################################
@@ -103,18 +103,22 @@ class tree(Sprite):
 # TODO: rename this class to your game's name...
 class LumberJack(Microgame):
     def __init__(self):
+        # TODO: Initialization code here
         Microgame.__init__(self)
         self.jack = Man()
-        self.tree = tree()
-        self.sprites = Group(self.jack, self.tree)
-        # TODO: Initialization code here
-
+        #self.tree = tree()
+        self.sprites = Group(self.jack)
+        self.background = load(join("games","Lumberjack","images","forest.png"))
+        
     def start(self):
         # TODO: Startup code here
+        #.load(join("games","Lumberjack","music","tree_song.ogg"))
+        #music.play()
         pass
 
     def stop(self):
         # TODO: Clean-up code here
+        #music.stop()
         pass
 
     def update(self, events):
@@ -124,6 +128,7 @@ class LumberJack(Microgame):
     def render(self, surface):
         # TODO: Rendering code here
         surface.fill(Color(255, 255, 255))
+        surface.blit(self.background, (0, 0), area = None, special_flags = 0)
         self.sprites.draw(surface)
 
     def get_timelimit(self):
