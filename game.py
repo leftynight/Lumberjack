@@ -32,7 +32,7 @@ def title():
 def thumbnail():
     # TODO: Return a (relative path) to the thumbnail image file for your game.
     #raise NotImplementedError("thumbnail")
-    return join('games','Lumberjack',"images",'thumbnail.png')
+    return join('games','Lumberjack',"images",'thumbnail.jpg')
 
 def hint():
     # TODO: Return the hint string for your game.
@@ -69,37 +69,30 @@ class Man(Sprite):
         self.image, self.rect = _load_image(imgpath, 150, 400)#locals.HEIGHT)
         #self.sound = pygame.mixer.Sound(join( ... ))
 
-# class treeBlock(Sprite):
-#     def __init__(self, x, y, type):
-#         Sprite.__init__(self)
-#         if  self.type == 0:
-#             imgpath = join('games', 'Lumberjack', 'tree_right.png')
+class treeBlock(Sprite):
+    def __init__(self, x, y, inp):
+        Sprite.__init__(self)
+        self.type = inp
+        if  self.type == 0:
+            imgpath = join('games', 'Lumberjack', 'images', 'tree_right.png')
 
-#         elif self.type == 1:
-#             imgpath = join('games', 'Lumberjack', 'tree_left.png')
-#             x -= 75
-#         else:
-#             imgpath = join('games', 'Lumberjack', 'tree_center.png')
 
-#         self.image, self.rect = _load_image(imgpath, x, y)
+        elif self.type == 2:
+            imgpath = join('games', 'Lumberjack', 'images', 'tree_left.png')
+            x -= 157
 
-#     #def update(self, event):
-#         #self.sound.play()
+        elif self.type == 1:
+            imgpath = join('games', 'Lumberjack', 'images', 'tree_norm.png')
+
+        self.image, self.rect = _load_image(imgpath, x, y)
+
+    def update(event):
+        pass
         
-# class tree(Sprite):
-#     def __init(self):
-#         Sprite.__init__(self)
-#         createTree(100, locals.HEIGHT)
-
-#     def createTree(x,y):
-#         self.Tree = []
-#         x, y = tree.rect.topleft
-#         while y > 0:
-#             self.agrigate.add(treeBlock(x-75, y), randint(0,4))
 
 
 ##### MICROGAME CLASS ##########################################################
-
+LEFT_POSITION = 325
 # TODO: rename this class to your game's name...
 class LumberjackGame(Microgame):
     def __init__(self):
@@ -110,45 +103,67 @@ class LumberjackGame(Microgame):
         self.left_chop, _ = _load_image(join("games","Lumberjack","images","timberman_chopleft.png"), 150, 400)
         self.right, _ = _load_image(join("games","Lumberjack","images","timberman_normalright.png"), 150, 400)
         self.right_chop, _ = _load_image(join("games","Lumberjack","images","timberman_chopright.png"), 150, 400)
-        #self.tree = tree()
         self.sprites = Group(self.jack)
-        self.background = load(join("games","Lumberjack","images","forest.png"))
+        self.background = load(join("games","Lumberjack","images","forest.jpg"))
+        self.tree = Group(treeBlock(LEFT_POSITION, 550, 1))
         
     def start(self):
         # TODO: Startup code here
-        music.load(join("games","Lumberjack","music","tree_song.ogg"))
-        music.play()
+        #music.load(join("games","Lumberjack","music","tree_song.ogg"))
+        #music.play()
+        pass
 
     def stop(self):
         # TODO: Clean-up code here
-        music.stop()
+        #music.stop()
+        pass
+
+    def generateTree(self):
+        _ , min_y = self.tree.sprites()[len(self.tree.sprites()) - 1].rect.topleft
+        cur_tree = 0
+        for n in range(0, (len(self.tree.sprites()) - 1)):
+            _ , y = self.tree.sprites()[n].rect.topleft
+            if y < min_y:
+                min_y = y
+                cur_tree = n
+        print min_y, self.tree.sprites()[cur_tree].type
+        if min_y > 0:
+            tree_type = self.tree.sprites()[cur_tree].type
+            if tree_type == 2:
+                self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(1,2)))
+            elif tree_type == 0:
+                self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(0,1))) 
+            else:
+                self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(0,2)))
 
     def update(self, events):
         # TODO: Update code here
         self.sprites.update()
+        self.generateTree()
 
         #Process user input
         sound_chop = pygame.mixer.Sound(join("games","Lumberjack","music","axe_chop.wav"))
+        if self.jack.image == self.left_chop:
+            self.jack.image = self.left
+            self.jack.rect = (125, 400)
+        elif self.jack.image == self.right_chop:
+            self.jack.image = self.right
+            self.jack.rect = (500, 400)
         for event in events:
             if event.type == KEYDOWN and event.key == K_LEFT:
                 sound_chop.play()
                 self.jack.image = self.left_chop
                 self.jack.rect = (150, 450)
-            elif event.type == KEYUP and event.key == K_LEFT:
-                self.jack.image = self.left
-                self.jack.rect = (150, 400)
             elif event.type == KEYDOWN and event.key == K_RIGHT:
                 sound_chop.play()
                 self.jack.image = self.right_chop
-                self.jack.rect = (400, 450)
-            elif event.type == KEYUP and event.key == K_RIGHT:
-                self.jack.image = self.right
-                self.jack.rect = (500, 400)
+                self.jack.rect = (375, 450)
 
     def render(self, surface):
         # TODO: Rendering code here
         surface.fill(Color(255, 255, 255))
         surface.blit(self.background, (0, 0), area = None, special_flags = 0)
+        self.tree.draw(surface)
         self.sprites.draw(surface)
 
     def get_timelimit(self):
