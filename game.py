@@ -22,7 +22,7 @@ from microgame import Microgame
 def make_game():
     # TODO: Return a new instance of your Microgame class.
     #raise NotImplementedError("make_game")
-    return Lumberjack()
+    return LumberjackGame()
 
 def title():
     # TODO: Return the title of the game.
@@ -101,29 +101,49 @@ class Man(Sprite):
 ##### MICROGAME CLASS ##########################################################
 
 # TODO: rename this class to your game's name...
-class Lumberjack(Microgame):
+class LumberjackGame(Microgame):
     def __init__(self):
         # TODO: Initialization code here
         Microgame.__init__(self)
         self.jack = Man()
+        self.left, _ = _load_image(join("games","Lumberjack","images","timberman_normalleft.png"), 150, 400)
+        self.left_chop, _ = _load_image(join("games","Lumberjack","images","timberman_chopleft.png"), 150, 400)
+        self.right, _ = _load_image(join("games","Lumberjack","images","timberman_normalright.png"), 150, 400)
+        self.right_chop, _ = _load_image(join("games","Lumberjack","images","timberman_chopright.png"), 150, 400)
         #self.tree = tree()
         self.sprites = Group(self.jack)
         self.background = load(join("games","Lumberjack","images","forest.png"))
         
     def start(self):
         # TODO: Startup code here
-        #.load(join("games","Lumberjack","music","tree_song.ogg"))
-        #music.play()
-        pass
+        music.load(join("games","Lumberjack","music","tree_song.ogg"))
+        music.play()
 
     def stop(self):
         # TODO: Clean-up code here
-        #music.stop()
-        pass
+        music.stop()
 
     def update(self, events):
         # TODO: Update code here
         self.sprites.update()
+
+        #Process user input
+        sound_chop = pygame.mixer.Sound(join("games","Lumberjack","music","axe_chop.wav"))
+        for event in events:
+            if event.type == KEYDOWN and event.key == K_LEFT:
+                sound_chop.play()
+                self.jack.image = self.left_chop
+                self.jack.rect = (150, 450)
+            elif event.type == KEYUP and event.key == K_LEFT:
+                self.jack.image = self.left
+                self.jack.rect = (150, 400)
+            elif event.type == KEYDOWN and event.key == K_RIGHT:
+                sound_chop.play()
+                self.jack.image = self.right_chop
+                self.jack.rect = (400, 450)
+            elif event.type == KEYUP and event.key == K_RIGHT:
+                self.jack.image = self.right
+                self.jack.rect = (500, 400)
 
     def render(self, surface):
         # TODO: Rendering code here
