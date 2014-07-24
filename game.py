@@ -75,22 +75,16 @@ class treeBlock(Sprite):
         self.type = inp
         if  self.type == 0:
             imgpath = join('games', 'Lumberjack', 'images', 'tree_right.png')
-
-
         elif self.type == 2:
             imgpath = join('games', 'Lumberjack', 'images', 'tree_left.png')
             x -= 157
-
         elif self.type == 1:
             imgpath = join('games', 'Lumberjack', 'images', 'tree_norm.png')
-
         self.image, self.rect = _load_image(imgpath, x, y)
 
     def update(self):
         self.rect = self.rect.move(0, 140)
         
-
-
 ##### MICROGAME CLASS ##########################################################
 LEFT_POSITION = 325
 # TODO: rename this class to your game's name...
@@ -100,11 +94,12 @@ class LumberjackGame(Microgame):
         Microgame.__init__(self)
         self.jack = Man()
         self.count = 0
-        self.mycount = pygame.font.SysFont("monospace", 50)
+        self.mycount = pygame.font.SysFont("arial", 50, bold = True)
         self.left, self.left_rect = _load_image(join("games","Lumberjack","images","timberman_normalleft.png"), 105, 400)
         self.left_chop, self.leftc_rect = _load_image(join("games","Lumberjack","images","timberman_chopleft.png"), 130, 450)
         self.right, self.right_rect = _load_image(join("games","Lumberjack","images","timberman_normalright.png"), 500, 400)
         self.right_chop, self.rightc_rect = _load_image(join("games","Lumberjack","images","timberman_chopright.png"), 375, 450)
+        self.stump = load(join("games","Lumberjack","images","stump.png"))
         self.sprites = Group(self.jack)
         self.background = load(join("games","Lumberjack","images","forest.png"))
         self.tree = Group(treeBlock(LEFT_POSITION, 550, 1))
@@ -139,8 +134,7 @@ class LumberjackGame(Microgame):
     def updateTree(self, side):
         max_y = locals.HEIGHT
         cur_tree = 0
-        ''
-        for n in range(0, (len(self.tree.sprites()) - 1)):
+        for n in range(0, (len(self.tree.sprites()))):
             _ , y = self.tree.sprites()[n].rect.topleft
             if 550 == y:
                 max_y = y
@@ -149,7 +143,7 @@ class LumberjackGame(Microgame):
         if self.tree.sprites()[cur_tree].type == side:
             self.lose()
         else:
-            self.tree.remove( self.tree.sprites()[cur_tree])
+            self.tree.remove(self.tree.sprites()[cur_tree])
             #self.tree.update()
             for each in self.tree:
                 each.update()
@@ -186,6 +180,7 @@ class LumberjackGame(Microgame):
         surface.fill(Color(255, 255, 255))
         surface.blit(self.background, (0, 0), area = None, special_flags = 0)
         self.tree.draw(surface)
+        surface.blit(self.stump, (318, 690), area = None, special_flags = 0)
         self.sprites.draw(surface)
         label = self.mycount.render(str(self.count), 1, (255, 255, 255))
         if self.count <= 9:
@@ -196,4 +191,4 @@ class LumberjackGame(Microgame):
     def get_timelimit(self):
         # TODO: Return the time limit of this game (in seconds, 0 <= s <= 15)
         #raise NotImplementedError("get_timelimit")
-        return 100
+        return 15
