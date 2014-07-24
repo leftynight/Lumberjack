@@ -86,8 +86,8 @@ class treeBlock(Sprite):
 
         self.image, self.rect = _load_image(imgpath, x, y)
 
-    def update(event):
-        pass
+    def update(self):
+        self.rect = self.rect.move(0, 140)
         
 
 
@@ -126,7 +126,6 @@ class LumberjackGame(Microgame):
             if y < min_y:
                 min_y = y
                 cur_tree = n
-        print min_y, self.tree.sprites()[cur_tree].type
         if min_y > 0:
             tree_type = self.tree.sprites()[cur_tree].type
             if tree_type == 2:
@@ -135,6 +134,24 @@ class LumberjackGame(Microgame):
                 self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(0,1))) 
             else:
                 self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(0,2)))
+
+    def updateTree(self, side):
+        max_y = locals.HEIGHT
+        cur_tree = 0
+        ''
+        for n in range(0, (len(self.tree.sprites()) - 1)):
+            _ , y = self.tree.sprites()[n].rect.topleft
+            if 550 == max_y:
+                max_y = y
+                cur_tree = n
+        print max_y, self.tree.sprites()[cur_tree].type 
+        if self.tree.sprites()[cur_tree].type == side:
+            self.lose()
+        else:
+            self.tree.remove( self.tree.sprites()[cur_tree])
+            #self.tree.update()
+            for each in self.tree:
+                each.update()
 
     def update(self, events):
         # TODO: Update code here
@@ -145,7 +162,7 @@ class LumberjackGame(Microgame):
         sound_chop = pygame.mixer.Sound(join("games","Lumberjack","music","axe_chop.wav"))
         if self.jack.image == self.left_chop:
             self.jack.image = self.left
-            self.jack.rect = (125, 400)
+            self.jack.rect = (105, 400)
         elif self.jack.image == self.right_chop:
             self.jack.image = self.right
             self.jack.rect = (500, 400)
@@ -153,11 +170,13 @@ class LumberjackGame(Microgame):
             if event.type == KEYDOWN and event.key == K_LEFT:
                 sound_chop.play()
                 self.jack.image = self.left_chop
-                self.jack.rect = (150, 450)
+                self.jack.rect = (130, 450)
+                self.updateTree(2)
             elif event.type == KEYDOWN and event.key == K_RIGHT:
                 sound_chop.play()
                 self.jack.image = self.right_chop
                 self.jack.rect = (375, 450)
+                self.updateTree(0)
 
     def render(self, surface):
         # TODO: Rendering code here
@@ -169,4 +188,4 @@ class LumberjackGame(Microgame):
     def get_timelimit(self):
         # TODO: Return the time limit of this game (in seconds, 0 <= s <= 15)
         #raise NotImplementedError("get_timelimit")
-        return 15
+        return 100
