@@ -100,6 +100,7 @@ class LumberjackGame(Microgame):
         Microgame.__init__(self)
         self.jack = Man()
         self.count = 0
+        self.mycount = pygame.font.SysFont("monospace", 50)
         self.left, self.left_rect = _load_image(join("games","Lumberjack","images","timberman_normalleft.png"), 105, 400)
         self.left_chop, self.leftc_rect = _load_image(join("games","Lumberjack","images","timberman_chopleft.png"), 130, 450)
         self.right, self.right_rect = _load_image(join("games","Lumberjack","images","timberman_normalright.png"), 500, 400)
@@ -110,14 +111,13 @@ class LumberjackGame(Microgame):
   
     def start(self):
         # TODO: Startup code here
-        #music.load(join("games","Lumberjack","music","tree_song.ogg"))
-        #music.play()
-        pass
+        music.load(join("games","Lumberjack","music","tree_song.ogg"))
+        music.play()
+        self.generateTree()
 
     def stop(self):
         # TODO: Clean-up code here
-        #music.stop()
-        pass
+        music.stop()
 
     def generateTree(self):
         _ , min_y = self.tree.sprites()[len(self.tree.sprites()) - 1].rect.topleft
@@ -127,7 +127,7 @@ class LumberjackGame(Microgame):
             if y < min_y:
                 min_y = y
                 cur_tree = n
-        if min_y > 0:
+        if min_y > 0 and min_y <= 550:
             tree_type = self.tree.sprites()[cur_tree].type
             if tree_type == 2:
                 self.tree.add(treeBlock(LEFT_POSITION, (min_y - 140), randint(1,2)))
@@ -142,7 +142,7 @@ class LumberjackGame(Microgame):
         ''
         for n in range(0, (len(self.tree.sprites()) - 1)):
             _ , y = self.tree.sprites()[n].rect.topleft
-            if 550 == max_y:
+            if 550 == y:
                 max_y = y
                 cur_tree = n
         print max_y, self.tree.sprites()[cur_tree].type 
@@ -187,6 +187,11 @@ class LumberjackGame(Microgame):
         surface.blit(self.background, (0, 0), area = None, special_flags = 0)
         self.tree.draw(surface)
         self.sprites.draw(surface)
+        label = self.mycount.render(str(self.count), 1, (255, 255, 255))
+        if self.count <= 9:
+            surface.blit(label, (398, 200))
+        else:
+            surface.blit(label, (385, 200))
 
     def get_timelimit(self):
         # TODO: Return the time limit of this game (in seconds, 0 <= s <= 15)
